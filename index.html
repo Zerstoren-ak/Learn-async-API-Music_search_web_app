@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"
+    />
+      <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css" />
+    <title>iTunes music-video search</title>
+  </head>
+  <body>
+      <section class="page-sidebar">
+          <div class="logo d-flex align-items-center">
+              <i class="fas fa-music"></i>
+              <h2 class="mb-0 h1">Music</h2>
+          </div>
+          <form oninput="limitResult.value=searchLimit.value" class="form-inline" name="search-form" id="search-form">
+              <div class="form-group">
+                  <input
+                          type="search"
+                          class="form-control"
+                          name="query"
+                          placeholder="Search..."
+                          required
+                  />
+              </div>
+              <div class="form-group">
+                  <select class="form-control w-100" name="typeSelect">
+                      <option value="musicVideo">Music Video</option>
+                      <option value="song">Music</option>
+                      <option value="shortFilm">Short Film</option>
+                      <option value="all">All</option>
+                  </select>
+              </div>
+              <div class="form-group flex-column">
+                  <label for="limit">Videos to search – <output name="limitResult" for="limit">10</output></label>
+                  <input class="form-control w-100 my-2" type="range" step="5" min="0" max="200" name="searchLimit" value="10" id="limit">
+              </div>
+              <button type="submit" class="btn btn-outline-danger py-0">Find</button>
+          </form>
+      </section>
+      <section class="page-inner">
+          <main class="main-content video-slider" id="video-slider">
+              <h1>Search for your favourite music & videos</h1>
+              <div class="slider">
+              </div>
+              <div><span id="currentResult"></span>/<span id="allResults"></span></div>
+          </main>
+      </section>
+    <script src="js/jquery.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"
+    ></script>
+    <script src="js/app.js"></script>
+    <script src="https://kit.fontawesome.com/1737e83e5d.js" crossorigin="anonymous"></script>
+
+  </body>
+</html>
