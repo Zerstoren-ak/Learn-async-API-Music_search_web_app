@@ -147,6 +147,13 @@ html, body {
     background-color: #ffffff;
 }
 
+.slick-slider {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
 /*//////...////*/
 .video-button {
     font-size: 2rem;
