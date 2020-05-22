@@ -2,29 +2,35 @@
 
 const slider = $('.slider');
 slider.slick();
-
-slider.on(`init`, function (event,slick){
-    console.log(slick)
-})
+//
+// slider.on(`init`, function (event,slick){
+//     console.log(slick)
+// });
 
 // const formatter = new Intl.DateTimeFormat(`ua`, {
 //     year: numeric,
 // });
 
 const searchForm = document.getElementById(`search-form`);
-const videoSlider = document.getElementById('video-slider');
+const videoSlider = document.getElementById(`video-slider`);
+
+const formatter = new Intl.NumberFormat("en", {
+    style: "currency",
+    currency: "UAH",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+});
 
 searchForm.addEventListener('submit', async function (event) {
     event.preventDefault();
     const data = new FormData(this);
     let response = await fetch(`https://itunes.apple.com/search?term=${data.get('query')}&entity=${data.get(`typeSelect`)}&limit=${data.get(`searchLimit`)}`);
-    console.log(data.get(`typeSelect`));
     let json = await response.json();
     console.log(json);
     const resultsArray = json.results;
     console.log(resultsArray);
     slider.slick('unslick');
-    slider.html('');//maybe?
+    slider.html(''); //maybe?
     slider.slick({
         slidesToShow: 1,
         prevArrow: `<button class="btn-arrow btn-prev fas fa-chevron-left"></button>`,
@@ -34,6 +40,8 @@ searchForm.addEventListener('submit', async function (event) {
         let template = createVideoTag(element);
         slider.slick('slickAdd', template);
     });
+    videoSlider.querySelector(`.slider-counter`).classList.remove(`hidden`);
+    await getCurrency();
 });
 
 slider.on('beforeChange', function(event, slick, currentSlide, nextSlide){
@@ -48,7 +56,27 @@ slider.on('beforeChange', function(event, slick, currentSlide, nextSlide){
 });
 
 
-
+async function getCurrency() {
+    let findUSD = videoSlider.querySelectorAll(`.video-description`);
+    try {
+        let response = await fetch(`https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5`);
+        let currencyList = await response.json();
+        let currency = 0;
+        currencyList.forEach(element => {
+            if (element.ccy == `USD`) {
+                currency = element.sale;
+            }
+        });
+        findUSD.forEach(e => {
+            e.dataset.newprice = `${formatter.format(e.dataset.price * currency)}`;
+        });
+    } catch {
+        findUSD.forEach(e => {
+            e.dataset.newprice = `Cannot get exchange rates`;
+        })
+    }
+}
+// searchForm.addEventListener(`submit`, getCurrency);
 
 videoSlider.addEventListener('click', videoManipulations);
 
@@ -93,7 +121,7 @@ function videoManipulations(e) {
         const videos = document.querySelectorAll('.slider video');
         videos.forEach((e) =>{
           e.pause();
-        })
+        });
       });
 
   slider.on('destroy', function(e,slick){});
@@ -115,7 +143,7 @@ function createVideoTag(obj) {
                         <i class="fas fa-play"></i>
                         </button>
                     </div>
-                    <div class="video-description">
+                    <div class="video-description" data-price="${obj.trackPrice}" data-newprice="">
                         <h3>${obj.artistName} – ${obj.trackName}</h3>
                         <p class="mb-0">${releaseDate.getFullYear()}</p>
                     </div>
@@ -123,7 +151,8 @@ function createVideoTag(obj) {
     return html;
 }
 
-
+// let date = Date.now();
+// console.log(date);
 
 // let offset = 0;
 // for (let index = offset, index2 = 0; index2 < 60; index++) {

@@ -2,6 +2,10 @@ html, body {
     font-family: 'Lato', sans-serif;
 }
 
+.hidden {
+    display: none;
+}
+
 .page-sidebar {
     position: fixed;
     left: 0;
@@ -121,6 +125,7 @@ html, body {
 .video-description {
     background-color: #ffffff;
     text-align: center;
+    position: relative;
 }
 
 .video-description h3 {
@@ -129,9 +134,18 @@ html, body {
     padding-top: 2rem;
 }
 
+.video-description::after {
+    position: absolute;
+    content: "Only: " attr(data-price)"USD" " ("attr(data-newPrice)")";
+    top: 1rem;
+    left: 1rem;
+    color: #FF0066;
+    font-size: 1.5rem;
+}
 
-
-
+.slider-counter {
+    background-color: #ffffff;
+}
 
 /*//////...////*/
 .video-button {
