@@ -2,7 +2,7 @@
 
 const slider = $('.slider');
 slider.slick();
-//
+
 // slider.on(`init`, function (event,slick){
 //     console.log(slick)
 // });
@@ -10,6 +10,7 @@ slider.slick();
 // const formatter = new Intl.DateTimeFormat(`ua`, {
 //     year: numeric,
 // });
+
 const formatter = new Intl.NumberFormat("en", {
     style: "currency",
     currency: "UAH",
@@ -22,16 +23,13 @@ const videoSlider = document.getElementById(`video-slider`);
 const currentResult = document.getElementById(`currentResult`);
 const allResults = document.getElementById(`allResults`);
 
-if(!localStorage.userVisit) {
-    localStorage.userVisit = JSON.stringify({});
+let currentDate = new Date();
+console.log(currentDate);
+
+if(!localStorage.userInfo) {
+    localStorage.userInfo = JSON.stringify({});
 }
-
-localStorage.exchangeRate = JSON.stringify({});
-
-const userVisit = JSON.parse(localStorage.userVisit);
-const exchangeRate = JSON.parse(localStorage.exchangeRate);
-userGetDate(userVisit);
-
+const userInfo = JSON.parse(localStorage.userInfo);
 
 searchForm.addEventListener('submit', async function (event) {
     event.preventDefault();
@@ -70,39 +68,53 @@ slider.on('beforeChange', function(event, slick, currentSlide, nextSlide){
 
 async function getCurrency() {
     let findUSD = videoSlider.querySelectorAll(`.video-description`);
-    exchangeGetDate(exchangeRate);
-    try {
-        let response = await fetch(`https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5`);
-        let currencyList = await response.json();
+    let firstVisit = new Date(userInfo.date);
+    let currency = 0;
+    if(currentDate.getDate() != firstVisit.getDate()) {
+        localStPutDate(userInfo,`userInfo`);
+        try {
+            let response = await fetch(`https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5`);
+            let currencyList = await response.json();
 
-        let currency = 0;
-        currencyList.forEach(element => {
-            if (element.ccy == `USD`) {
-                currency = element.sale;
-            }
-        });
+            currencyList.forEach(element => {
+                if (element.ccy == `USD`) {
+                    currency = Number(element.sale);
+                }
+            });
+            findUSD.forEach(e => {
+                e.dataset.newprice = `${formatter.format(e.dataset.price * currency)}`;
+            });
+            localStInput(`userInfo`, `exchangeRate`, currency);
+        } catch {
+            findUSD.forEach(e => {
+                e.dataset.newprice = `Cannot get exchange rates`;
+            })
+        }
+    } else {
+        currency = userInfo.exchangeRate;
+        console.log(currency);
         findUSD.forEach(e => {
             e.dataset.newprice = `${formatter.format(e.dataset.price * currency)}`;
         });
-    } catch {
-        findUSD.forEach(e => {
-            e.dataset.newprice = `Cannot get exchange rates`;
-        })
     }
 }
 
-function userGetDate (object) {
-        object.date = Date.now();
-        localStorage.userVisit = JSON.stringify(object);
+function localStPutDate(object, ls_name) {
+    object.date = Date.now();
+    localStorage[ls_name] = JSON.stringify(object);
 }
 
-function exchangeGetDate(object){
-        object.date = Date.now();
-        localStorage.exchangeRate = JSON.stringify(object);
+function localStInput(ls_name, key, value) {
+    const object = JSON.parse(localStorage[ls_name]);
+    object[key] = value;
+    localStorage[ls_name] = JSON.stringify(object);
 }
 
-function dateCompare(object1, object2){
+function dateCompare(ls_name){
+    const object = JSON.parse(localStorage[ls_name]);
 
+
+    localStorage[ls_name] = JSON.stringify(object);
 }
 
 videoSlider.addEventListener('click', videoManipulations);
@@ -157,8 +169,6 @@ function videoManipulations(e) {
       allResults.textContent = slick.slideCount;
   });
 
-
-
 function createVideoTag(obj) {
     let releaseDate = new Date(obj.releaseDate);
 
@@ -177,8 +187,6 @@ function createVideoTag(obj) {
     return html;
 }
 
-// let date = Date.now();
-// console.log(date);
 
 // let offset = 0;
 // for (let index = offset, index2 = 0; index2 < 60; index++) {
@@ -186,3 +194,4 @@ function createVideoTag(obj) {
 //     append();
 //     offset += 60;
 // }
+
