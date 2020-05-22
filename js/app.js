@@ -22,49 +22,39 @@ const searchForm = document.getElementById(`search-form`);
 const videoSlider = document.getElementById(`video-slider`);
 const currentResult = document.getElementById(`currentResult`);
 const allResults = document.getElementById(`allResults`);
-
 let currentDate = new Date();
-console.log(currentDate);
 
 if(!localStorage.userInfo) {
     localStorage.userInfo = JSON.stringify({});
 }
 const userInfo = JSON.parse(localStorage.userInfo);
 
-searchForm.addEventListener('submit', async function (event) {
-    event.preventDefault();
-    const data = new FormData(this);
-    let response = await fetch(`https://itunes.apple.com/search?term=${data.get('query')}&entity=${data.get(`typeSelect`)}&limit=${data.get(`searchLimit`)}`);
-    let json = await response.json();
-    console.log(json);
-    const resultsArray = json.results;
-    console.log(resultsArray);
-    slider.slick('unslick');
-    slider.html(''); //maybe?
-    slider.slick({
-        slidesToShow: 1,
-        prevArrow: `<button class="btn-arrow btn-prev fas fa-chevron-left"></button>`,
-        nextArrow: `<button class="btn-arrow btn-next fas fa-chevron-right"></button>`,
-        draggable: false,
-    });
-    resultsArray.forEach(element => {
-        let template = createVideoTag(element);
-        slider.slick('slickAdd', template);
-    });
-    videoSlider.querySelector(`.slider-counter`).classList.remove(`hidden`);
-    await getCurrency();
-});
+searchForm.addEventListener('submit', createSlider);
+videoSlider.addEventListener('click', videoManipulations);
 
-slider.on('beforeChange', function(event, slick, currentSlide, nextSlide){
-    const videos = document.querySelectorAll('.slider video');
-    videos.forEach((e) => {
-        e.pause();
-        e.controls = false;
-    });
-    const button = videoSlider.querySelector(`.slick-active .video-button`);
-    setTimeout(() => button.classList.remove(`hide`), 1000);
-    currentResult.textContent = nextSlide + 1;
-});
+async function createSlider(event){
+        event.preventDefault();
+        const data = new FormData(this);
+        let response = await fetch(`https://itunes.apple.com/search?term=${data.get('query')}&entity=${data.get(`typeSelect`)}&limit=${data.get(`searchLimit`)}`);
+        let json = await response.json();
+        console.log(json);
+        const resultsArray = json.results;
+        console.log(resultsArray);
+        slider.slick('unslick');
+        slider.html(''); //maybe?
+        slider.slick({
+            slidesToShow: 1,
+            prevArrow: `<button class="btn-arrow btn-prev fas fa-chevron-left"></button>`,
+            nextArrow: `<button class="btn-arrow btn-next fas fa-chevron-right"></button>`,
+            draggable: false,
+        });
+        resultsArray.forEach(element => {
+            let template = createVideoTag(element);
+            slider.slick('slickAdd', template);
+        });
+        videoSlider.querySelector(`.slider-counter`).classList.remove(`hidden`);
+        await getCurrency();
+}
 
 async function getCurrency() {
     let findUSD = videoSlider.querySelectorAll(`.video-description`);
@@ -111,14 +101,12 @@ function localStInput(ls_name, key, value) {
     localStorage[ls_name] = JSON.stringify(object);
 }
 
-function dateCompare(ls_name){
-    const object = JSON.parse(localStorage[ls_name]);
-
-
-    localStorage[ls_name] = JSON.stringify(object);
-}
-
-videoSlider.addEventListener('click', videoManipulations);
+// function inputExchangedRate (value){
+//     let findUSD = videoSlider.querySelectorAll(`.video-description`);
+//     findUSD.forEach(e => {
+//         e.dataset.newprice = value;
+//     });
+// }
 
 function videoManipulations(e) {
         const arrows = videoSlider.querySelectorAll(`.btn-arrow`);
@@ -156,12 +144,16 @@ function videoManipulations(e) {
         }
 }
 
-    slider.on('beforeChange', function(){
-        const videos = document.querySelectorAll('.slider video');
-        videos.forEach((e) =>{
-          e.pause();
-        });
-      });
+slider.on('beforeChange', function(event, slick, currentSlide, nextSlide){
+    const videos = document.querySelectorAll('.slider video');
+    videos.forEach((e) => {
+        e.pause();
+        e.controls = false;
+    });
+    const button = videoSlider.querySelector(`.slick-active .video-button`);
+    setTimeout(() => button.classList.remove(`hide`), 1000);
+    currentResult.textContent = nextSlide + 1;
+});
 
   slider.on('destroy', function(e,slick){});
 
