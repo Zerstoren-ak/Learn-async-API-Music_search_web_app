@@ -84,6 +84,7 @@ async function getCurrency() {
             findUSD.forEach(e => {
                 e.dataset.newprice = `${formatter.format(e.dataset.price * currency)}`;
             });
+
             localStInput(`userInfo`, `exchangeRate`, currency);
         } catch {
             findUSD.forEach(e => {
@@ -92,7 +93,7 @@ async function getCurrency() {
         }
     } else {
         currency = userInfo.exchangeRate;
-        console.log(currency);
+
         findUSD.forEach(e => {
             e.dataset.newprice = `${formatter.format(e.dataset.price * currency)}`;
         });
