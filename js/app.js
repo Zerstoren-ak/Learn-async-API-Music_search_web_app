@@ -70,7 +70,7 @@ async function getCurrency() {
     let findUSD = videoSlider.querySelectorAll(`.video-description`);
     let firstVisit = new Date(userInfo.date);
     let currency = 0;
-    if(currentDate.getDate() != firstVisit.getDate()) {
+    if(currentDate.getDate() != firstVisit.getDate() && currentDate.getMonth() != firstVisit.getMonth() && currentDate.getFullYear() != firstVisit.getFullYear()) {
         localStPutDate(userInfo,`userInfo`);
         try {
             let response = await fetch(`https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5`);
