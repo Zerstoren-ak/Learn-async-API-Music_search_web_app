@@ -130,7 +130,7 @@ html, body {
 .video-description h3 {
     color: #FF0066;
     margin-bottom: 1rem;
-    padding-top: 2rem;
+    padding-top: 3rem;
 }
 
 .video-description::after {

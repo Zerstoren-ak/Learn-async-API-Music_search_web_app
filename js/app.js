@@ -31,8 +31,15 @@ videoSlider.addEventListener('click', videoManipulations);
 async function createSlider(event) {
     event.preventDefault();
     const data = new FormData(this);
+    const config = {
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET',
+            'Access-Control-Allow-Headers': 'Content-Type, X-Requested-With',
+        },
+    };
     console.log(data.get(`typeSelect`));
-    let response = await fetch(`https://itunes.apple.com/search?term=${data.get('query')}&entity=${data.get(`typeSelect`) == `all` ? `` : data.get(`typeSelect`)}&limit=${data.get(`searchLimit`)}`);
+    let response = await fetch(`https://itunes.apple.com/search?term=${data.get('query')}&entity=${data.get(`typeSelect`) == `all` ? `` : data.get(`typeSelect`)}&limit=${data.get(`searchLimit`)}`, config);
     console.log(response);
     let json = await response.json();
     console.log(json);
@@ -64,7 +71,7 @@ async function getCurrency() {
     let findUSD = videoSlider.querySelectorAll(`.video-description`);
     let firstVisit = new Date(userInfo.date);
     let currency = 0;
-    if (currentDate.getDate() != firstVisit.getDate() && currentDate.getMonth() != firstVisit.getMonth() && currentDate.getFullYear() != firstVisit.getFullYear()) {
+    if ((currentDate.getDate() != firstVisit.getDate()) && (currentDate.getMonth() != firstVisit.getMonth()) && (currentDate.getFullYear() != firstVisit.getFullYear())) {
         localStPutDate(userInfo, `userInfo`);
         try {
             let response = await fetch(`https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5`);
@@ -75,6 +82,9 @@ async function getCurrency() {
                     currency = Number(element.sale);
                 }
             });
+            if (currency == NaN) {
+                throw `Cannot get exchange rates`;
+            }
             findUSD.forEach((e) => {
                 e.dataset.newprice = `${formatter.format(e.dataset.price * currency)}`;
             });
@@ -87,7 +97,7 @@ async function getCurrency() {
         }
     } else {
         currency = userInfo.exchangeRate;
-
+        console.log(currency);
         findUSD.forEach((e) => {
             e.dataset.newprice = `${formatter.format(e.dataset.price * currency)}`;
         });
