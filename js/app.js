@@ -32,7 +32,7 @@ async function createSlider(event) {
     event.preventDefault();
     const data = new FormData(this);
     console.log(data.get(`typeSelect`));
-    let response = await fetch(`https://itunes.apple.com/search?term=${data.get('query')}&entity=${data.get(`typeSelect`) == `all` ? "" : data.get(`typeSelect`)}&limit=${data.get(`searchLimit`)}`);
+    let response = await fetch(`https://itunes.apple.com/search?term=${data.get('query')}&entity=${data.get(`typeSelect`)}&limit=${data.get(`searchLimit`)}`);
     let json = await response.json();
     console.log(json);
     const resultsArray = json.results;
