@@ -51,7 +51,6 @@ html, body {
 .form-inline button:hover,
 .form-inline button:active {
     background-color: #FF0066;
-    border: #FF0066;
 }
 
 .page-inner {
