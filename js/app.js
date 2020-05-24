@@ -31,40 +31,33 @@ videoSlider.addEventListener('click', videoManipulations);
 async function createSlider(event) {
     event.preventDefault();
     const data = new FormData(this);
-    const config = {
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET',
-            'Access-Control-Allow-Headers': 'Content-Type, X-Requested-With',
-        },
-    };
     console.log(data.get(`typeSelect`));
-    let response = await fetch(`https://itunes.apple.com/search?term=${data.get('query')}&entity=${data.get(`typeSelect`) == `all` ? `` : data.get(`typeSelect`)}&limit=${data.get(`searchLimit`)}`, config);
-    console.log(response);
-    let json = await response.json();
-    console.log(json);
-    const resultsArray = json.results;
-    console.log(resultsArray.length);
-    slider.slick('unslick');
-    slider.html(''); //maybe?
-    slider.slick({
-        slidesToShow: 1,
-        prevArrow: `<button class="btn-arrow btn-prev fas fa-chevron-left"></button>`,
-        nextArrow: `<button class="btn-arrow btn-next fas fa-chevron-right"></button>`,
-        draggable: false,
-    });
-    resultsArray.forEach(element => {
-        let template = createVideoTag(element);
-        slider.slick('slickAdd', template);
-    });
+        let response = await fetch(`https://itunes.apple.com/search?term=${data.get('query')}&entity=${data.get(`typeSelect`) == `all` ? `` : data.get(`typeSelect`)}&limit=${data.get(`searchLimit`)}`);
+        console.log(response);
+        let json = await response.json();
+        console.log(json);
+        const resultsArray = json.results;
+        console.log(resultsArray.length);
+        slider.slick('unslick');
+        slider.html(''); //maybe?
+        slider.slick({
+            slidesToShow: 1,
+            prevArrow: `<button class="btn-arrow btn-prev fas fa-chevron-left"></button>`,
+            nextArrow: `<button class="btn-arrow btn-next fas fa-chevron-right"></button>`,
+            draggable: false,
+        });
+        resultsArray.forEach(element => {
+            let template = createVideoTag(element);
+            slider.slick('slickAdd', template);
+        });
 
-    if(resultsArray.length != 0) {
-        videoSlider.querySelector(`.slider-counter`).classList.remove(`hidden`);
-    } else {
-        videoSlider.querySelector(`.slider-counter`).classList.add(`hidden`);
-    }
+        if(resultsArray.length != 0) {
+            videoSlider.querySelector(`.slider-counter`).classList.remove(`hidden`);
+        } else {
+            videoSlider.querySelector(`.slider-counter`).classList.add(`hidden`);
+        }
 
-    await getCurrency();
+        await getCurrency();
 }
 
 async function getCurrency() {
@@ -74,7 +67,7 @@ async function getCurrency() {
     if ((currentDate.getDate() != firstVisit.getDate()) && (currentDate.getMonth() != firstVisit.getMonth()) && (currentDate.getFullYear() != firstVisit.getFullYear())) {
         localStPutDate(userInfo, `userInfo`);
         try {
-            let response = await fetch(`https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5`);
+            let response = await fetch(`https://api.pivatbank.ua/p24api/pubinfo?json&exchange&coursid=5`);
             let currencyList = await response.json();
 
             currencyList.forEach((element) => {
