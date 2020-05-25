@@ -18,12 +18,11 @@ const searchForm = document.getElementById(`search-form`);
 const videoSlider = document.getElementById(`video-slider`);
 const currentResult = document.getElementById(`currentResult`);
 const allResults = document.getElementById(`allResults`);
-let currentDate = new Date();
 
-if (!localStorage.userInfo) {
-    localStorage.userInfo = JSON.stringify({});
+if (!localStorage.currencyInfo) {
+    localStorage.currencyInfo = JSON.stringify({});
 }
-const userInfo = JSON.parse(localStorage.userInfo);
+const currencyInfo = JSON.parse(localStorage.currencyInfo);
 
 searchForm.addEventListener('submit', createSlider);
 videoSlider.addEventListener('click', videoManipulations);
@@ -57,15 +56,16 @@ async function createSlider(event) {
             videoSlider.querySelector(`.slider-counter`).classList.add(`hidden`);
         }
 
-        await getCurrency();
+        await getCurrency(currencyInfo);
 }
 
-async function getCurrency() {
+async function getCurrency(_localStorage) {
     let findUSD = videoSlider.querySelectorAll(`.video-description`);
-    let firstVisit = new Date(userInfo.date);
+    let currentDate = new Date();
+    let firstVisit = new Date(_localStorage.date);
     let currency = 0;
-    if ((currentDate.getDate() != firstVisit.getDate()) && (currentDate.getMonth() != firstVisit.getMonth()) && (currentDate.getFullYear() != firstVisit.getFullYear())) {
-        localStPutDate(userInfo, `userInfo`);
+    if ((currentDate.getDate() != firstVisit.getDate()) || (currentDate.getMonth() != firstVisit.getMonth()) || (currentDate.getFullYear() != firstVisit.getFullYear())) {
+        localStPutDate(_localStorage, `currencyInfo`);
         try {
             let response = await fetch(`https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5`);
             let currencyList = await response.json();
@@ -82,14 +82,14 @@ async function getCurrency() {
                 e.dataset.newprice = `${formatter.format(e.dataset.price * currency)}`;
             });
 
-            localStInput(`userInfo`, `exchangeRate`, currency);
+            localStInput(`currencyInfo`, `exchangeRate`, currency);
         } catch {
             findUSD.forEach(e => {
                 e.dataset.newprice = `Cannot get exchange rates`;
             })
         }
     } else {
-        currency = userInfo.exchangeRate;
+        currency = _localStorage.exchangeRate;
         console.log(currency);
         findUSD.forEach((e) => {
             e.dataset.newprice = `${formatter.format(e.dataset.price * currency)}`;
