@@ -67,7 +67,7 @@ async function getCurrency() {
     if ((currentDate.getDate() != firstVisit.getDate()) && (currentDate.getMonth() != firstVisit.getMonth()) && (currentDate.getFullYear() != firstVisit.getFullYear())) {
         localStPutDate(userInfo, `userInfo`);
         try {
-            let response = await fetch(`https://api.pivatbank.ua/p24api/pubinfo?json&exchange&coursid=5`);
+            let response = await fetch(`https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5`);
             let currencyList = await response.json();
 
             currencyList.forEach((element) => {
@@ -75,9 +75,9 @@ async function getCurrency() {
                     currency = Number(element.sale);
                 }
             });
-            if (currency == NaN) {
-                throw `Cannot get exchange rates`;
-            }
+            // if (currency == NaN) {
+            //     throw `Cannot get exchange rates`;
+            // }
             findUSD.forEach((e) => {
                 e.dataset.newprice = `${formatter.format(e.dataset.price * currency)}`;
             });
@@ -196,3 +196,41 @@ function createVideoTag(obj) {
 //     offset += 60;
 // }
 
+// let someArray = [];
+//
+// someArray = [1,2,3];
+//
+// let [fNmbr, sNmbr, tNmbr] = someArray;
+//
+// console.log(fNmbr);
+
+//////// Map and Set studying (p.s.: Set is cool)
+
+
+// localStorage.mapCollection = JSON.stringify([]);
+// let mapCollection = JSON.parse(localStorage.mapCollection);
+//
+// function putMap(map) {
+//     map = new Map([
+//         [`date`, Date.now()],
+//         [`course`, 27],
+//         [`date`, new Date(1590343484116)],
+//     ]);
+//     map.set(`course`, 28);
+//     localStorage.mapCollection = JSON.stringify([...map]);
+//     console.log(map);
+// };
+//
+// putMap(mapCollection);
+//
+// localStorage.setCollection = JSON.stringify([]);
+// let setCollection = JSON.parse(localStorage.setCollection);
+//
+// function putSet(set) {
+//     set = new Set ([Date.now(), 27, 27,27,27, `kurva`]);
+//     set.add(27);
+//     localStorage.setCollection = JSON.stringify([...set]);
+//     console.log(set);
+// }
+//
+// putSet(setCollection);
