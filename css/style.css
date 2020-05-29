@@ -218,3 +218,31 @@ html, body {
     visibility: hidden;
     z-index: -10;
 }
+
+/*Animation*/
+
+.preloader::after {
+    content: '';
+    background: url('../img/gear.png') no-repeat;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    transform-origin: center center;
+    top: 0;
+    left: 20rem;
+    animation: move-small 2s linear infinite reverse;
+}
+
+@keyframes move-small {
+    0% {
+        transform: scale(0.5) rotate(19deg);
+    }
+
+    50% {
+        transform: scale(0.5) rotate(199deg);
+    }
+
+    100% {
+        transform: scale(0.5) rotate(379deg);
+    }
+}

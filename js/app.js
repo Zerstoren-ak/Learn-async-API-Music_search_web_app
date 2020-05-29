@@ -36,7 +36,7 @@ async function createSlider(event) {
         let json = await response.json();
         console.log(json);
         const resultsArray = json.results;
-        console.log(resultsArray.length);
+        console.log(resultsArray);
         slider.slick('unslick');
         slider.html(''); //maybe?
         slider.slick({
@@ -64,28 +64,36 @@ async function getCurrency(_localStorage) {
     let currentDate = new Date();
     let firstVisit = new Date(_localStorage.date);
     let currency = 0;
-    if ((currentDate.getDate() != firstVisit.getDate()) || (currentDate.getMonth() != firstVisit.getMonth()) || (currentDate.getFullYear() != firstVisit.getFullYear())) {
+    if ((currentDate.getDate() != firstVisit.getDate()) || (currentDate.getMonth() != firstVisit.getMonth()) || (currentDate.getFullYear() != firstVisit.getFullYear()) || !currencyInfo.exchangeRate) {
         localStPutDate(_localStorage, `currencyInfo`);
         try {
             let response = await fetch(`https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5`);
             let currencyList = await response.json();
+            console.log(currencyList);
 
             currencyList.forEach((element) => {
                 if (element.ccy == `USD`) {
                     currency = Number(element.sale);
                 }
             });
-            // if (currency == NaN) {
-            //     throw `Cannot get exchange rates`;
-            // }
+
+            if (isNaN(currency) || (currency == undefined)){
+                throw `smthing wrong with object property`;
+            }
+
             findUSD.forEach((e) => {
                 e.dataset.newprice = `${formatter.format(e.dataset.price * currency)}`;
             });
 
             localStInput(`currencyInfo`, `exchangeRate`, currency);
-        } catch {
+        } catch (error) {
+            console.error(error);
             findUSD.forEach(e => {
                 e.dataset.newprice = `Cannot get exchange rates`;
+            })
+        } finally {
+            findUSD.forEach(e => {
+                e.querySelector(`.preloader`).classList.add(`hidden`);
             })
         }
     } else {
@@ -93,6 +101,8 @@ async function getCurrency(_localStorage) {
         console.log(currency);
         findUSD.forEach((e) => {
             e.dataset.newprice = `${formatter.format(e.dataset.price * currency)}`;
+            e.querySelector(`.preloader`).classList.add(`hidden`);
+            console.log(e);
         });
     }
 }
@@ -183,6 +193,7 @@ function createVideoTag(obj) {
                     <div class="video-description" data-price="${obj.trackPrice}" data-newprice>
                         <h3>${obj.artistName} – ${obj.trackName}</h3>
                         <p class="mb-0">${releaseDate.getFullYear()}</p>
+                          <div class="preloader"></div>
                     </div>
                 </div>`;
     return html;
@@ -204,7 +215,7 @@ function createVideoTag(obj) {
 //
 // console.log(fNmbr);
 
-//////// Map and Set studying (p.s.: Set is cool)
+//////// Map and Set learning (p.s.: Set is cool)
 
 
 // localStorage.mapCollection = JSON.stringify([]);
@@ -234,3 +245,41 @@ function createVideoTag(obj) {
 // }
 //
 // putSet(setCollection);
+
+
+
+//
+// (async function () {
+//     let respond = await fetch(`https://itunes.apple.com/search?entity=software&limit=200&term=skype`);
+//     // console.log(respond);
+//     let json = await respond.json();
+//     let gotData = json.results;
+//     // console.log(gotData);
+//     let filter = gotData.filter((element) => {
+//         if (element.price != 0) {
+//             return element.price;
+//         }
+//     });
+//     let newArr = filter.map(e =>{
+//         return e.price;
+//     })
+//     console.log(filter);
+//     console.log(newArr);
+// })();
+//
+// let prices = {
+//     banana: 1,
+//     orange: 2,
+//     meat: 4,
+// };
+//
+// console.log(Object.entries(prices));
+//
+//
+// let doublePrices = Object.fromEntries(
+//     // преобразовать в массив, затем map, затем fromEntries обратно объект
+//     Object.entries(prices).map(([key, value]) => [key, value * 2])
+// );
+//
+// console.log(doublePrices);
+//
