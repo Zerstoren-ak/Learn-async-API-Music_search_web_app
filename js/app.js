@@ -56,15 +56,15 @@ async function createSlider(event) {
             videoSlider.querySelector(`.slider-counter`).classList.add(`hidden`);
         }
 
-        await getCurrency(currencyInfo);
+        await getCurrency(currencyInfo, `exchangeRate`);
 }
 
-async function getCurrency(_localStorage) {
+async function getCurrency(_localStorage, _key) {
     let findUSD = videoSlider.querySelectorAll(`.video-description`);
     let currentDate = new Date();
     let firstVisit = new Date(_localStorage.date);
     let currency = 0;
-    if ((currentDate.getDate() != firstVisit.getDate()) || (currentDate.getMonth() != firstVisit.getMonth()) || (currentDate.getFullYear() != firstVisit.getFullYear()) || !currencyInfo.exchangeRate) {
+    if ((currentDate.getDate() != firstVisit.getDate()) || (currentDate.getMonth() != firstVisit.getMonth()) || (currentDate.getFullYear() != firstVisit.getFullYear()) || !currencyInfo[_key]) {
         localStPutDate(_localStorage, `currencyInfo`);
         try {
             let response = await fetch(`https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5`);
@@ -97,7 +97,7 @@ async function getCurrency(_localStorage) {
             })
         }
     } else {
-        currency = _localStorage.exchangeRate;
+        currency = _localStorage[_key];
         console.log(currency);
         findUSD.forEach((e) => {
             e.dataset.newprice = `${formatter.format(e.dataset.price * currency)}`;
